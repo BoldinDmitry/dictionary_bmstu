@@ -7,7 +7,7 @@
 Для установки используйте пакетный менеджер [pip](https://pip.pypa.io/en/stable/).
 
 ```bash
-pip install -i https://test.pypi.org/simple/ dictionary-generator
+pip install dictionary-generator==1.0.1
 ```
 
 ## Использование
