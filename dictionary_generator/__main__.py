@@ -1,11 +1,12 @@
 import datetime
 import inspect
+import pathlib
 import sys
 
 from docx import Document
 
-import exercises_abs
-from exercises import *
+from dictionary_generator import exercises_abs
+from dictionary_generator.exercises import *
 
 
 def random_day(x):
@@ -13,7 +14,7 @@ def random_day(x):
     return random.choice([x - one_day, x, x + one_day])
 
 
-if __name__ == "__main__":
+def main():
     document = Document()
     document.add_heading("Дневник самоподготовки", 0)
 
@@ -95,5 +96,12 @@ if __name__ == "__main__":
         row_cells[3].text = state_of_health
         row_cells[4].text = "+"
 
+    here = pathlib.Path(__file__).parent
+
     document_name = input("название документа:\n")
-    document.save(document_name + ".docx")
+    document.save(here / (document_name + ".docx"))
+    print("Документ успешно сохранен в ", here / (document_name + ".docx"))
+
+
+if __name__ == "__main__":
+    main()

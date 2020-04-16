@@ -1,6 +1,6 @@
 import random
 
-from exercises_abs import ExerciseAbstract
+from dictionary_generator.exercises_abs import ExerciseAbstract
 
 
 class Rod20(ExerciseAbstract):
