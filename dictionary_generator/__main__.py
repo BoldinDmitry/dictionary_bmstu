@@ -9,11 +9,6 @@ from dictionary_generator import exercises_abs
 from dictionary_generator.exercises import *
 
 
-def random_day(x):
-    one_day = datetime.timedelta(days=1)
-    return random.choice([x - one_day, x, x + one_day])
-
-
 def main():
     document = Document()
     document.add_heading("Дневник самоподготовки", 0)
@@ -52,13 +47,18 @@ def main():
     start = datetime.datetime.strptime(start_str, "%d.%m.%Y")
     end = datetime.datetime.strptime(end_str, "%d.%m.%Y")
 
-    frequency = 4
+    while True:
+        try:
+            frequency = int(input("раз в сколько дней были занятия?\n"))
+            break
+        except ValueError:
+            print("некоректное число")
+            frequency = int(input("раз в сколько дней были занятия?\n"))
 
     weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     day_time = ["утро", "день"]
 
-    date_generated = [
-        random_day(start + datetime.timedelta(days=x)) for x in range(0, (end - start).days, frequency)]
+    date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end - start).days, frequency)]
 
     all_exercises = []
     for name, obj in inspect.getmembers(sys.modules[__name__]):

@@ -28,6 +28,8 @@ pip install -i https://test.pypi.org/simple/ dictionary-generator
 >>> 04.06.2020
 дата конца занятий, формат: %d.%m.%Y:
 >>> 04.07.2020
+раз в сколько дней были занятия?
+>>> 3
 название документа:
 >>> bmstu_dict
 Документ успешно сохранен в  /.../bmstu_dict.docx
