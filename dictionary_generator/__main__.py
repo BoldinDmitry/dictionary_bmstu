@@ -1,5 +1,6 @@
 import datetime
 import inspect
+import io
 import pathlib
 import sys
 
@@ -9,15 +10,35 @@ from dictionary_generator import exercises_abs
 from dictionary_generator.exercises import *
 
 
-def main():
+def fill_row(row, text_fields):
+    for i, text in enumerate(text_fields):
+        row[i].text = text
+
+
+def generate(
+        name: str,
+        date_of_birth: str,
+        group: str,
+        weight: str,
+        height: str,
+        start: datetime,
+        end: datetime,
+        frequency: int,
+) -> io.BytesIO:
+    """
+    Function for generating word file with table
+    :param name: student info
+    :param date_of_birth: student info
+    :param group: student info
+    :param weight: student info
+    :param height: student info
+    :param start: start date of exercises
+    :param end: end date of exercises
+    :param frequency: how often did student take an exercises
+    :return: buffer with docx file
+    """
     document = Document()
     document.add_heading("Дневник самоподготовки", 0)
-
-    name = input("ФИО:\n")
-    date_of_birth = input("Дата рождения:\n")
-    group = input("Группа:\n")
-    weight = input("Вес:\n")
-    height = input("Рост:\n")
 
     table = document.add_table(rows=1, cols=2)
 
@@ -41,24 +62,21 @@ def main():
     row[0].text = "Рост"
     row[1].text = height
 
-    start_str = input("дата начала занятий, формат: %d.%m.%Y:\n")
-    end_str = input("дата конца занятий, формат: %d.%m.%Y:\n")
-
-    start = datetime.datetime.strptime(start_str, "%d.%m.%Y")
-    end = datetime.datetime.strptime(end_str, "%d.%m.%Y")
-
-    while True:
-        try:
-            frequency = int(input("раз в сколько дней были занятия?\n"))
-            break
-        except ValueError:
-            print("некоректное число")
-            frequency = int(input("раз в сколько дней были занятия?\n"))
-
-    weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    weekdays = [
+        "Понедельник",
+        "Вторник",
+        "Среда",
+        "Четверг",
+        "Пятница",
+        "Суббота",
+        "Воскресенье",
+    ]
     day_time = ["утро", "день"]
 
-    date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end - start).days, frequency)]
+    date_generated = [
+        start + datetime.timedelta(days=x)
+        for x in range(0, (end - start).days, frequency)
+    ]
 
     all_exercises = []
     for name, obj in inspect.getmembers(sys.modules[__name__]):
@@ -69,14 +87,20 @@ def main():
     table.style = "Table Grid"
 
     hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = "День недели, число, месяц, год, время занятия"
-    hdr_cells[1].text = "Содержания физкультурного занятия"
-    hdr_cells[2].text = "Пульс"
-    hdr_cells[3].text = "Самочувствие"
-    hdr_cells[4].text = "Желание заниматься"
+
+    column_names = ["День недели, число, месяц, год, время занятия", "Содержания физкультурного занятия", "Пульс",
+                    "Самочувствие", "Желание заниматься"]
+
+    fill_row(hdr_cells, column_names)
 
     for date in date_generated:
-        string_date = ", ".join([weekdays[date.weekday()], date.strftime("%d.%m.%Y"), random.choice(day_time)])
+        string_date = ", ".join(
+            [
+                weekdays[date.weekday()],
+                date.strftime("%d.%m.%Y"),
+                random.choice(day_time),
+            ]
+        )
 
         random.shuffle(all_exercises)
 
@@ -90,17 +114,70 @@ def main():
 
         row_cells = table.add_row().cells
 
-        row_cells[0].text = string_date
-        row_cells[1].text = description
-        row_cells[2].text = pulse
-        row_cells[3].text = state_of_health
-        row_cells[4].text = "+"
+        column_data = [string_date, description, pulse, state_of_health, "+"]
 
-    here = pathlib.Path(__file__).parent
+        fill_row(row_cells, column_data)
+
+    file_stream = io.BytesIO()
+    document.save(file_stream)
+    file_stream.seek(0)
+
+    return file_stream
+
+
+def main():
+    name = input("ФИО:\n")
+    date_of_birth = input("Дата рождения:\n")
+    group = input("Группа:\n")
+    weight = input("Вес:\n")
+    height = input("Рост:\n")
 
     document_name = input("название документа:\n")
-    document.save(here / (document_name + ".docx"))
-    print("Документ успешно сохранен в ", here / (document_name + ".docx"))
+
+    while True:
+        start_str = input("дата начала занятий, формат: %d.%m.%Y:\n")
+        try:
+            start = datetime.datetime.strptime(start_str, "%d.%m.%Y")
+        except ValueError:
+            print("некоректная дата")
+        else:
+            break
+
+    while True:
+        end_str = input("дата конца занятий, формат: %d.%m.%Y:\n")
+        try:
+            end = datetime.datetime.strptime(end_str, "%d.%m.%Y")
+        except ValueError:
+            print("некоректная дата")
+        else:
+            break
+
+    while True:
+        try:
+            frequency = int(input("раз в сколько дней были занятия?\n"))
+        except ValueError:
+            print("некоректное число")
+        else:
+            break
+
+    document = generate(
+        name=name,
+        date_of_birth=date_of_birth,
+        group=group,
+        weight=weight,
+        height=height,
+        start=start,
+        end=end,
+        frequency=frequency,
+    )
+
+    here = pathlib.Path(__file__).parent
+    document_path = here / (document_name + ".docx")
+
+    with open(document_path, "wb") as w:
+        w.write(document.getbuffer().tobytes())
+
+    print("Документ успешно сохранен в ", document_path)
 
 
 if __name__ == "__main__":
