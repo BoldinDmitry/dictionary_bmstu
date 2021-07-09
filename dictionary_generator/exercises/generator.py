@@ -25,7 +25,8 @@ class Exercises:
                 self.warms.append(name)
             if str(name.__class__.__name__).find("ColdUp") != -1:
                 self.colds.append(name)
-            if (str(name.__class__.__name__).find("WarmUp") == -1) and (str(name.__class__.__name__).find("ColdUp") == -1):
+            if (str(name.__class__.__name__).find("WarmUp") == -1) and (
+                    str(name.__class__.__name__).find("ColdUp") == -1):
                 result.append(name)
 
         self.all_exercises = result
@@ -35,20 +36,20 @@ class Exercises:
         random.shuffle(self.all_exercises)
 
         # +warmup
-        j = random.randint(0,len(self.warms)-1)
-        description, pulse, state_of_health = self.warms[j].description()+"\n", str(self.warms[j].pulse())+"\n", \
-                                              self.warms[j].state_of_health()+"\n"
+        j = random.randint(0, len(self.warms) - 1)
+        description, pulse, state_of_health = self.warms[j].description() + "\n", str(self.warms[j].pulse()) + "\n", \
+                                              self.warms[j].state_of_health() + "\n"
 
         # +exercises
-        for i in range(2,count+2):
+        for i in range(2, count + 2):
             description += self.all_exercises[i].description() + "\n"
             pulse += str(self.all_exercises[i].pulse()) + "\n"
             state_of_health += self.all_exercises[i].state_of_health() + "\n"
 
         # +endup (заминка)
-        j = random.randint(0,len(self.colds)-1)
-        description += self.colds[j].description()+"\n"
-        pulse += str(self.colds[j].pulse())+"\n"
-        state_of_health += self.colds[j].state_of_health()+"\n"
+        j = random.randint(0, len(self.colds) - 1)
+        description += self.colds[j].description() + "\n"
+        pulse += str(self.colds[j].pulse()) + "\n"
+        state_of_health += self.colds[j].state_of_health() + "\n"
 
         return description, pulse, state_of_health
