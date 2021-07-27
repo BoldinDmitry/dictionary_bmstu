@@ -14,7 +14,7 @@ setup(
     description="BMSTU word dictionary generator",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/BoldinDmitry/dictionary_bmstu",
+    url="https://github.com/Rotalyi0Volopehin/dictionary_bmstu.git",
     author="BMSTU",
     author_email="office@bmstu.ru",
     license="MIT",
