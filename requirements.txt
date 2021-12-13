@@ -1,5 +1,5 @@
 delta==0.4.2
 docx==0.2.4
-lxml==4.6.3
+lxml==4.6.5
 Pillow==8.3.2
 python-docx==0.8.10
