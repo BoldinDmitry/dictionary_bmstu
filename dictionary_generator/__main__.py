@@ -34,7 +34,7 @@ def main():
 
     while True:
         try:
-            frequency = int(input("раз в сколько дней были занятия?\n"))
+            frequency = int(input("Занятие каждые N (дней)?\n"))
         except ValueError:
             print("некоректное число")
         else:
